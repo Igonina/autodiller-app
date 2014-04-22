@@ -1,7 +1,10 @@
 var express = require('express');
 var app = express();
 
+
 var users = [];
+var manufacturers = [];
+
 users.list = function() {
 	if(!(this.length>0)) {
 		return 'Список пользователей пуст';	
@@ -15,7 +18,9 @@ users.list = function() {
 };
 
 app.get('/', function(req, res){
-  res.send('Главная страница.'+'Число пользователей: '+users.length + '<br/> Список пользователей:' + users.list());
+
+  res.send('Главная страница.' + 'Число пользователей: '+users.length + '<br/> Список пользователей:' + users.list());
+  
 });
 
 app.get('/user/add', function(req, res){
@@ -29,14 +34,22 @@ app.get('/user/add', function(req, res){
 
 app.get('/user/:id/cars/add', function(req, res){
 	users[req.params.id].cars.push({
+		manufacturer: Math.random(),
 		model: Math.random(),
-		mark: Math.random(),
 		year: Math.random(),
 		engine_num_or_vin: Math.random(),
 		cuzov_num: Math.random(),
 		probeg: Math.random()
 	});
     res.send('Машина добавлена для пользователя ' + req.params.id + ' : ' + users.list());
+});
+
+
+app.get('/manufacturer/add/:name', function(req, res) {
+	manufacturers.push({
+		name: req.params.name
+	});
+	res.send('Производитель добавлен: ' + req.params.name);
 });
 
 var server = app.listen(3000, function() {
