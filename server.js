@@ -1,6 +1,11 @@
-var express = require('express');
-var app = express();
 
+var bodyParser = require('body-parser');
+
+var express = require('express');
+// create our app
+var app = express();
+// instruct the app to use the `bodyParser()` middleware for all routes
+app.use(bodyParser());
 
 var users = [];
 var manufacturers = [];
@@ -20,19 +25,30 @@ users.list = function() {
 	}
 };
 
+var button = function(action, label) {
+	return '<form method="GET" action="'+ action + '"><input type="submit" value="' + label + '"></input></form>';
+};
+
+var button2 = function(action, label) {
+	return '<form method="POST" action="'+ action + '"><label>Имя:</label><input type="text" name="name"></input><input type="submit" value="' + label + '"></input></form>';
+};
+
 app.get('/', function(req, res){
 
-  res.send('Главная страница.' + 'Число пользователей: '+users.length + '<br/> Список пользователей:' + users.list());
+  res.send('Главная страница.' + 'Число пользователей: '+
+	  users.length + '<br/> Список пользователей:' + users.list() +
+	  button2('/user/add', 'Добавить пользователя')
+	  );
   
 });
 
-app.get('/user/add', function(req, res){
+app.post('/user/add', function(req, res){
 	users.push({
-		login: Math.random(),
+		login: req.body.name,
 		password: Math.random(),
 		cars: []
 	});
-  res.send('Пользователь добавлен');
+  res.send('Пользователь добавлен<br/><a href="/">Вернуться на главную</a>');
 });
 
 app.get('/user/:id/cars/add', function(req, res){
